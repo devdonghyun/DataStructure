@@ -26,7 +26,14 @@ for i in range(n):
     X.append(random.randint(-n, n))
 
 # prefixSum1 호출
+s = time.process_time()
 prefixSum1(X, n)
+e = time.process_time()
+print("prefixSum1 수행시간: ", e-s)
+
 # prefixSum2 호출
+s = time.process_time()
 prefixSum2(X, n)
+e = time.process_time()
+print("prefixSum2 수행시간: ", e-s)
 # 두 함수의 수행시간 출력
