@@ -54,6 +54,9 @@ class myList():
         # 4. self.A[k] = x
         # 5. self.n += 1
 
+    def size(self):
+        return self.A.__sizeof__
+
 
 L = myList()
 while True:
