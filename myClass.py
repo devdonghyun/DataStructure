@@ -11,98 +11,106 @@ class myList():
         return f'  ({self.n}/{self.capacity}): ' + '[' + ', '.join([str(self.A[i]) for i in range(self.n)]) + ']'
 
     def __getitem__(self, k):  # k번째 칸에 저장된 값 리턴
-        # k가 음수일 수도 있음
-        # k가 올바른 인덱스 범위를 벗어나면 IndexError 발생시킴
-        if self.capacity == 0 or k > self.n:
-            raise IndexError
-
-        return self.A[k]
-
-    def __setitem__(self, k, x):  # k번째 칸에 값 x 저장
-        # k가 음수일 수도 있음
-        # k가 올바른 인덱스 범위를 벗어나면 IndexError 발생시킴
-        if self.capacity == 0 or k > self.n:
-            raise IndexError
-
-        self.A[k] = x
-
-    def change_size(self, new_capacity):
-        # 이 첫 문장은 수정하지 말 것
-        print(f'  * changing capacity: {self.capacity} --> {new_capacity}')
-        # 1. new_capacity의 크기의 리스트 B를 만듬
-        B = [None] * new_capacity
-        # 2. self.A의 값을 B로 옮김
-        for i in range(self.n):
-            B[i] = self.A[i]
-        # 3. del self.A  (A 지움)
-        del self.A
-        # 4. self.A = B
-        self.A = B
-        # 5. self.capacity = new_capacity
-        self.capacity = new_capacity
-
-    def append(self, x):
-        if self.n == self.capacity:  # 더 이상 빈 칸이 없으니 capacity 2배로 doubling
-            self.change_size(self.capacity*2)
-        self.A[self.n] = x     # 맨 뒤에 삽입
-        self.n += 1            # n 값 1 증가
-
-    def pop(self, k=None):  # A[k]를 제거 후 리턴. k 값이 없다면 가장 오른쪽 값 제거 후 리턴
-        # 빈 리스트이거나 올바른 인덱스 범위를 벗어나면:
+		# k가 음수일 수도 있음
+		# k가 올바른 인덱스 범위를 벗어나면 IndexError 발생시킴
         if self.n == 0 or k >= self.n:
-            raise IndexError
+			raise IndexError
 
-        if self.capacity >= 4 and self.n <= self.capacity//4:  # 실제 key 값이 전체의 25% 이하면 halving
-            self.change_size(self.capacity//2)
+		if k < 0:
+			if self.n+k < 0:
+				raise IndexError
+			return self.A[self.n+k]
+		else:
+			return self.A[k]
 
-        # 1. k 값이 주어진 경우와 주어지지 않은 경우 구별해야 함
-        if k == None:
-            x = self.A[-1]
-            self.A[-1] = None
-            self.n -= 1
-            return x
-        else:
-            if k >= 0:
-                x = self.A[k]
-                self.A[k] = None
-                for i in range(k, self.n-1):
-                    self.A[i] = self.A[i+1]
-                self.n -= 1
-                return x
-            else:
-                x = self.A[self.n+k]
-                self.A[k] = None
-                for i in range(self.n+k, self.n-1):
-                    self.A[i] = self.A[i+1]
-                self.n -= 1
-                return x
 
-        # 2. x = self.A[k]
-        # 3. A[k]의 오른쪽의 값들이 한 칸씩 왼쪽으로 이동해 메꿈
-        # 4. self.n -= 1
-        # 5. return x
 
-    def insert(self, k, x):
-        # 주의: k 값이 음수값일 수도 있음
-        # k 값이 올바른 인덱스 범위를 벗어나면, raise IndexError
-        # 1. k의 범위가 올바르지 않으면 IndexError 발생시킴
-        # 빈 리스트이거나 올바른 인덱스 범위를 벗어나면:
-        if self.capacity == 0 or k > self.n:
-            raise IndexError
-
-        # 2. self.n == self.capacity이면 self.change_size(self.capacity*2) 호출해 doubling
-        if self.n == self.capacity:
-            self.change_size(self.capacity*2)
-        # 3. A[k]와 오른쪽 값을 한 칸씩 오른쪽으로 이동
-        for i in range(self.n-1, k-1, -1):
-            self.A[i+1] = self.A[i]
-        # 4. self.A[k] = x
-        self.A[k] = x
-        # 5. self.n += 1
-        self.n += 1
-
-    def size(self):
-        return self.capacity
+	def __setitem__(self, k, x): # k번째 칸에 값 x 저장
+		# k가 음수일 수도 있음
+		# k가 올바른 인덱스 범위를 벗어나면 IndexError 발생시킴
+		if self.n == 0 or k >= self.n:
+			raise IndexError
+		
+		if k < 0:
+			if self.n + k < 0:
+				raise IndexError
+			self.A[self.n+k] = x
+		else:
+			self.A[k] = x
+		
+		
+	def change_size(self, new_capacity):
+		# 이 첫 문장은 수정하지 말 것
+		print(f'  * changing capacity: {self.capacity} --> {new_capacity}')
+		# 1. new_capacity의 크기의 리스트 B를 만듬
+		# 2. self.A의 값을 B로 옮김
+		# 3. del self.A  (A 지움)
+		# 4. self.A = B
+		# 5. self.capacity = new_capacity
+		B = [None] * new_capacity
+		for i in range(self.n):
+			B[i] = self.A[i]
+		del self.A
+		self.A = B
+		self.capacity = new_capacity
+		
+	def append(self, x):
+		if self.n == self.capacity: # 더 이상 빈 칸이 없으니 capacity 2배로 doubling
+			self.change_size(self.capacity*2)
+		self.A[self.n] = x     # 맨 뒤에 삽입
+		self.n += 1            # n 값 1 증가
+			
+	def pop(self, k=None): # A[k]를 제거 후 리턴. k 값이 없다면 가장 오른쪽 값 제거 후 리턴
+		# 빈 리스트이거나 올바른 인덱스 범위를 벗어나면:
+		if self.n == 0 or k >= self.n:
+			raise IndexError
+		if self.capacity >= 4 and self.n <= self.capacity//4: # 실제 key 값이 전체의 25% 이하면 halving
+			self.change_size(self.capacity//2)
+			
+		# 1. k 값이 주어진 경우와 주어지지 않은 경우 구별해야 함
+		# 2. x = self.A[k]
+		# 3. A[k]의 오른쪽의 값들이 한 칸씩 왼쪽으로 이동해 메꿈
+		# 4. self.n -= 1
+		# 5. return x
+		
+		if k == None:
+			x = self.A[self.n-1]
+			self.A[self.n-1] = None
+			self.n -= 1
+			return x
+		else:
+			if k >= 0:
+				x = self.A[k]
+				self.A[k] = None
+				for i in range(k, self.n-1):
+					self.A[i] = self.A[i+1]
+				self.n -= 1
+				return x
+			else:
+				x = self.A[self.n+k]
+				self.A[k] = None
+				for i in range(self.n+k, self.n-1):
+					self.A[i] = self.A[i+1]
+				self.n -= 1
+				return x
+				
+	def insert(self, k, x):
+		# 주의: k 값이 음수값일 수도 있음
+		# k 값이 올바른 인덱스 범위를 벗어나면, raise IndexError
+		# 1. k의 범위가 올바르지 않으면 IndexError 발생시킴
+		
+		if self.capacity == 0 or k >= self.n: # 빈 리스트이거나 올바른 인덱스 범위를 벗어나면:
+			raise IndexError
+		if self.n == self.capacity: # 2. self.n == self.capacity이면 self.change_size(self.capacity*2) 호출해 doubling
+			self.change_size(self.capacity*2)
+		for i in range(self.n-1, k-1, -1):
+			self.A[i+1] = self.A[i] # 3. A[k]와 오른쪽 값을 한 칸씩 오른쪽으로 이동
+		self.A[k] = x # 4. self.A[k] = x
+		self.n += 1 # 5. self.n += 1
+	
+	def size(self):
+		return self.capacity #리스트의 용량을 return
+		
 
 
 L = myList()
