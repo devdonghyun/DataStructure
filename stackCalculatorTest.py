@@ -28,21 +28,22 @@ def get_token_list(expr):
     token_list = []
 
     operstack = Stack()
-    for i in range(len(expr)):
-        if expr[i] in '+-/*^()':
+    for token_s in expr:
+        print(token_s)
+        if token_s in '+-/*^()':
             if operstack.isEmpty():
-                token_list.append(expr[i])
+                token_list.append(token_s)
             else:
                 temp_list = []
                 while (not operstack.isEmpty()):
                     temp_list.append(operstack.pop())
                 temp_list.reverse()
                 token_list.append(''.join(temp_list))
-                token_list.append(expr[i])
-        elif expr[i] == ' ':
+                token_list.append(token_s)
+        elif token_s == ' ':
             continue
         else:
-            operstack.push(expr[i])
+            operstack.push(token_s)
 
     if not operstack.isEmpty():
         temp_list = []
@@ -50,13 +51,12 @@ def get_token_list(expr):
             temp_list.append(operstack.pop())
         temp_list.reverse()
         token_list.append(''.join(temp_list))
-    # print(token_list)
     return token_list
 
 
 def infix_to_postfix(token_list):
     opstack = Stack()
-    out_list = []
+    outstack = []
 
     # 연산자의 우선순위 설정
     prec = {}
@@ -72,27 +72,27 @@ def infix_to_postfix(token_list):
             opstack.push(token)
         elif token == ')':
             while (not opstack.isEmpty() and opstack.top() != '('):
-                out_list.append(opstack.pop())
+                outstack.append(opstack.pop())
             opstack.pop()
         elif token in '+-/*^':
             while (not opstack.isEmpty() and prec[token] <= prec[opstack.top()]):
-                out_list.append(opstack.pop())
+                outstack.append(opstack.pop())
             opstack.push(token)
         else:  # operand일 때
-            out_list.append(token)
+            outstack.append(token)
 
     # opstack 에 남은 모든 연산자를 pop 후 outstack에 append
     # ... ... ...
     while (not opstack.isEmpty()):
-        out_list.append(opstack.pop())
+        outstack.append(opstack.pop())
 
-    return out_list
+    return outstack
 
 
 def compute_postfix(token_list):
     calstack = Stack()
     for token in token_list:
-        if token in '+-*/^':
+        if token in '+-*/':
             second_oper = float(calstack.pop())
             first_oper = float(calstack.pop())
             if token == '+':
@@ -101,12 +101,12 @@ def compute_postfix(token_list):
                 val = first_oper - second_oper
             elif token == '*':
                 val = first_oper * second_oper
-            elif token == '/':
-                val = first_oper / second_oper
             else:
-                val = first_oper ** second_oper
+                val = first_oper / second_oper
             calstack.push(val)
 
+        # elif token == '^':
+        #     oper = float(opstack.pop())
         else:
             calstack.push(token)
     return calstack.pop()
